@@ -3,8 +3,8 @@ def package_with_pyinstaller_api():
     opts = [
         "--onefile",
         "--name", "BOT-NET",
-        "--windowed", #是否需要窗口
-        "XXX.py",
+        "--windowed", #需要隐藏窗口
+        "client.py",
         ]
     try:
         run(opts)
