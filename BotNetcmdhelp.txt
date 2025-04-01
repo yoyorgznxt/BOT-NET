@@ -1,0 +1,119 @@
+Windows CMD（命令提示符）完整教程
+CMD（Command Prompt，命令提示符）是Windows系统自带的命令行工具，可以执行各种系统管理、文件操作、网络配置等任务。本教程涵盖基础命令、文件操作、系统管理、网络命令、批处理脚本等内容。
+
+📌 1. CMD 基础操作
+1.1 打开CMD
+方法1：Win + R → 输入 cmd → 回车
+
+方法2：搜索栏输入 cmd 或 命令提示符
+
+方法3：在文件资源管理器地址栏输入 cmd 回车
+
+1.2 基本命令
+命令	作用
+help	查看所有可用命令
+help [命令名]	查看某个命令的详细用法（如 help dir）
+cls	清屏
+exit	退出CMD
+echo [文本]	输出文本（如 echo Hello）
+title [新标题]	更改CMD窗口标题
+📂 2. 文件与目录操作
+2.1 目录导航
+命令	作用
+dir	列出当前目录内容
+cd [目录名]	进入指定目录（如 cd C:\Windows）
+cd ..	返回上一级目录
+cd \	返回根目录（如 C:\）
+pushd [目录]	进入目录并保存路径（可 popd 返回）
+tree	以树状图显示目录结构
+2.2 文件操作
+命令	作用
+copy [源文件] [目标]	复制文件（如 copy file.txt D:\）
+xcopy [源] [目标] /s /e	复制目录（含子目录）
+move [源] [目标]	移动文件或重命名
+del [文件名]	删除文件（如 del temp.txt）
+ren [旧名] [新名]	重命名文件（如 ren old.txt new.txt）
+type [文件名]	查看文件内容（如 type log.txt）
+more [文件名]	分页显示文件内容
+🛠 3. 系统管理命令
+3.1 系统信息
+命令	作用
+systeminfo	查看系统详细信息
+hostname	显示计算机名
+ver	显示Windows版本
+tasklist	查看所有运行中的进程
+taskkill /im [进程名] /f	强制结束进程（如 taskkill /im notepad.exe /f）
+shutdown	关机/重启
+shutdown /s	立即关机
+shutdown /r	立即重启
+shutdown /l	注销当前用户
+3.2 磁盘管理
+命令	作用
+chkdsk	检查磁盘错误
+chkdsk /f	修复磁盘错误（需重启）
+format [盘符]	格式化磁盘（如 format D:）
+diskpart	进入磁盘分区工具
+🌐 4. 网络命令
+命令	作用
+ipconfig	查看本机IP
+ipconfig /all	查看详细网络信息
+ipconfig /release	释放IP
+ipconfig /renew	重新获取IP
+ping [IP/域名]	测试网络连接（如 ping google.com）
+tracert [IP/域名]	追踪网络路径
+netstat -ano	查看所有网络连接和端口占用
+netsh	网络配置工具
+📜 5. 批处理脚本（.bat 文件）
+批处理（Batch）脚本可以自动执行多个命令，扩展名为 .bat 或 .cmd。
+
+5.1 基本批处理示例
+bat
+复制
+@echo off
+echo 这是一个批处理脚本
+dir
+pause
+@echo off：关闭命令回显
+
+pause：暂停，按任意键继续
+
+5.2 常用批处理命令
+命令	作用
+echo	输出文本
+set	定义变量（如 set name=John）
+if	条件判断（如 if exist file.txt (echo 存在)）
+for	循环（如 for %%i in (*.txt) do echo %%i）
+goto	跳转标签（如 goto start）
+call	调用另一个批处理文件
+5.3 示例：自动备份文件
+bat
+复制
+@echo off
+set backup_dir=D:\Backup
+if not exist "%backup_dir%" mkdir "%backup_dir%"
+xcopy C:\Data\*.* "%backup_dir%" /s /e /y
+echo 备份完成！
+pause
+🚀 6. 高级技巧
+6.1 命令组合
+>：输出到文件（如 dir > files.txt）
+
+>>：追加到文件（如 echo "new line" >> log.txt）
+
+|：管道（如 dir | find "txt" 查找所有 .txt 文件）
+
+6.2 环境变量
+set：查看所有环境变量
+
+set PATH：查看PATH变量
+
+setx [变量名] [值]：永久设置环境变量
+
+🎯 总结
+基础命令：dir、cd、copy、del
+
+系统管理：tasklist、shutdown、ipconfig
+
+网络命令：ping、tracert、netstat
+
+批处理脚本：.bat 文件、if、for、set
