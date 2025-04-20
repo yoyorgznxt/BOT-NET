@@ -5,8 +5,8 @@ import time
 import sys
 import shutil
 
-server_host = "free.frpee.com"
-server_port = 13840
+server_host = "your ip"
+server_port = 1000
 current_dir = os.getcwd()
 script_path = os.path.abspath(sys.argv[0])
 
