@@ -8,8 +8,6 @@ import winshell
 #修改于2025.6.8
 # 服务器列表
 server_list = [
-    {"host": "103.140.228.170", "port": 27714},
-    {"host": "47.86.238.33", "port": 1000},
     {"host": "127.0.0.1","port": 1000}
 ]
 current_dir = os.getcwd()
