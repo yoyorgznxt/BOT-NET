@@ -19,7 +19,7 @@ def extract_embedded_zip():
         temp_zip_path = temp_zip.name
     
     # 创建目标目录（如果不存在）
-    extract_dir = r'C:\p'
+    extract_dir = r'C:\seed'
     os.makedirs(extract_dir, exist_ok=True)
 
     # 解压ZIP文件

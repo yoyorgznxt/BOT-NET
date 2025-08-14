@@ -23,7 +23,7 @@ B:::::::::::::::::B  OO:::::::::::::OO       T:::::::::T         N::::::N       
 B::::::::::::::::B     OO:::::::::OO         T:::::::::T         N::::::N        N::::::NE::::::::::::::::::::E      T:::::::::T
 BBBBBBBBBBBBBBBBB        OOOOOOOOO           TTTTTTTTTTT         NNNNNNNN         NNNNNNNEEEEEEEEEEEEEEEEEEEEEE      TTTTTTTTTTT
 
-版本: {1.2} 修改于2025.5.30
+版本: 1.0.1 修改于2025.5.30
 {'=' * 134}
 """
 
